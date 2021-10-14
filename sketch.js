@@ -50,29 +50,29 @@ function preload(){
 
 //função para configuração do jogo
 function setup(){
-  createCanvas(600,200);
+  createCanvas(windowWidth,windowHeight);
   
-  dino = createSprite(50,180,20,60);
+  dino = createSprite(50,height-20,20,60);
   dino.addAnimation("correndo",dino_correndo);
   dino.addAnimation("dino_cactos",dino_cactos);
   dino.scale = 0.5;
   
-  solo = createSprite (200,170,600,20);
+  solo = createSprite (width/2,height-30,width,20);
   solo.addImage("solo",solo_anima);
   bordas = createEdgeSprites();
   
-  gameOver = createSprite(300,50,50,20);
+  gameOver = createSprite(width/2,height-150,50,20);
   gameOver.addImage("game_over", gameOver_imagem);
   gameOver.scale = 0.8;
   gameOver.visible = false;
   
-  Restart = createSprite(300,120,50,20);
+  Restart = createSprite(width/2,height-80,50,20);
   Restart.addImage("restart", Restart_imagem);
   Restart.scale = 0.6;
   Restart.visible = false;
  
   
-  solo_invisivel = createSprite (200,190,600,10);
+  solo_invisivel = createSprite (200,height-10,600,10);
   solo_invisivel.visible = false;
   
   JOGAR = 1;
@@ -107,19 +107,19 @@ function draw(){
    }
   
   if(estado_Jogo === JOGAR){
- 
     //dino salta com space
-   if(keyDown("space")&& dino.y > 160){
+    if(touches.lenght > 0||keyDown("space")&& dino.y > height-40){
     dino.velocityY = -10;//salto
     pulo.play();
+    touches = [];
    }
    dino.velocityY += 0.5;//gravidade
    placar = placar+ Math.round(frameRate()/60);
     
    solo.velocityX = -(2+placar/100);//velocidade do solo
   //reinicio do solo
-  if(solo.x < 0) {
-   solo.x = solo.width/2;  
+  if(solo.x < 200) {
+   solo.x = solo.width/5;  
   }
   if(placar > 0 && placar%100 === 0){
      pontos.play();
@@ -156,22 +156,22 @@ text("recorde: "+recorde,400,20);
 //funções
 
 function gerar_nuvens(){
- if(frameCount%60===0)   {
-  nuvem = createSprite(600,100,40,20);
-  nuvem.velocityX = -(2+placar/100);  
+ if(frameCount%100===0)   {
+  nuvem = createSprite(width,height-100,40,20);
+  nuvem.velocityX = -(1+placar/100);  
   nuvem.addImage("cloud",nuvem_anima);
   nuvem.scale = (random(0.5,1));
-  nuvem.y = Math.round(random(40,100));
+  nuvem.y = Math.round(random(height-180,height-150));
   nuvem.depth = dino.depth -1; //depth - profundidade
-  nuvem.lifetime = 310;
+  nuvem.lifetime = width/nuvem.velocityX;
   grupo_nuvens.add(nuvem);
  }
 }
   
 function gerar_cactos(){
-   if(frameCount%120===0) {
-  cacto = createSprite(600,160,40,20);
-  cacto.velocityX = -(2+placar/100); 
+   if(frameCount%160===0) {
+  cacto = createSprite(width,height-40,40,20);
+  cacto.velocityX = -(1+placar/100); 
   sorteio = Math.round(random(1,6));
   switch(sorteio){
     case 1: cacto.addImage("obstacle1",c1);   
@@ -199,9 +199,9 @@ function gerar_cactos(){
      break;
       
   }
-  cacto.x = Math.round(random(600,640));
+  cacto.x = Math.round(random(width,width+40));
   cacto.depth = dino.depth -1;
-  cacto.lifetime = 330;
+  cacto.lifetime = width/cacto.velocityX;
   grupo_cactos.add(cacto);
  }
 }
